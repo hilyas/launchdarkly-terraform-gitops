@@ -4,6 +4,7 @@ when_modified:
   # Only trigger Terrateam when terraform files or config changes
   file_patterns:
     ["*.tfvars", "*.tf", "environments/**/*.tf", ".terrateam/**/*.yml"]
+  working_dir: "."
 
 # Disable cost estimation for feature flag changes (not needed for LaunchDarkly)
 cost_estimation:
