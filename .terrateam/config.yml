@@ -2,31 +2,11 @@
 when_modified:
   autoapply: true
   # Only trigger Terrateam when terraform files or config changes
-  file_patterns:
-    ["*.tfvars", "*.tf", "environments/**/*.tf", ".terrateam/**/*.yml"]
+  file_patterns: ["*.tfvars", "*.tf", ".terrateam/**/*.yml"]
 
 # Disable cost estimation for feature flag changes (not needed for LaunchDarkly)
 cost_estimation:
   enabled: false
-
-# Configure directories to run Terraform in the root
-dirs:
-  .:
-    # Root directory configuration
-    tags: [root]
-    when_modified:
-      file_patterns:
-        ["*.tfvars", "*.tf", "environments/**/*.tf", ".terrateam/**/*.yml"]
-  environments/development:
-    # Override to run Terraform from the root directory
-    create_and_select_workspace: false
-    when_modified:
-      file_patterns: ["environments/development/**/*.tf", "*.tf"]
-  environments/production:
-    # Override to run Terraform from the root directory
-    create_and_select_workspace: false
-    when_modified:
-      file_patterns: ["environments/production/**/*.tf", "*.tf"]
 
 # Add helpful hooks for visibility and additional checks
 hooks:
