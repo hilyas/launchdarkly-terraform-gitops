@@ -76,12 +76,12 @@ resource "launchdarkly_feature_flag_environment" "new_checkout_prod" {
 
   on = true
 
-  # Initially disabled in production
+  # Roll out to 10% of users
   fallthrough {
-    variation = 1
+    rollout_weights = [10000, 90000] # 10% enabled, 90% disabled (in thousandths of a percent)
   }
 
-  # Beta testers get the feature enabled
+  # Beta testers always get the new experience
   rules {
     description = "Beta testers"
 
