@@ -1,1 +1,1 @@
-project_key = "my-project"
+project_key = "example-project"
