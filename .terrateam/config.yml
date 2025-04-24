@@ -1,0 +1,53 @@
+# Automatically run terraform apply when a pull request is merged
+when_modified:
+  autoapply: true
+  # Only trigger Terrateam when terraform files or config changes
+  file_patterns: ["*.tf", "environments/**/*.tf", ".terrateam/**/*.yml"]
+
+# Disable cost estimation for feature flag changes (not needed for LaunchDarkly)
+cost_estimation:
+  enabled: false
+
+# Add helpful hooks for visibility and additional checks
+hooks:
+  all:
+    pre:
+      - type: run
+        cmd: ["echo", "Starting Terraform operation for LaunchDarkly flags"]
+  plan:
+    post:
+      - type: run
+        cmd: ["echo", "Plan completed successfully"]
+  apply:
+    pre:
+      - type: run
+        cmd: ["echo", "Applying changes to LaunchDarkly flags"]
+    post:
+      - type: run
+        cmd: ["echo", "Successfully applied changes to LaunchDarkly flags"]
+
+# Custom workflow steps for Terraform operations
+workflows:
+  - tag_query: ""
+    plan:
+      - type: oidc
+        provider: gcp
+        service_account: "terrateam-state@playground-20231012.iam.gserviceaccount.com"
+        workload_identity_provider: "projects/849496875603/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+      - type: init
+      - type: plan
+        # Show a more compact plan output in the PR comment
+        extra_args: ["-compact-warnings"]
+    apply:
+      - type: oidc
+        provider: gcp
+        service_account: "terrateam-state@playground-20231012.iam.gserviceaccount.com"
+        workload_identity_provider: "projects/849496875603/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+      - type: init
+      - type: apply
+        # Automatically approve the apply without prompting
+        extra_args: ["-auto-approve"]
+      # Add error handling for apply failures
+      - type: run
+        cmd: ["echo", "Error occurred during apply - please check logs"]
+        run_on: failure
